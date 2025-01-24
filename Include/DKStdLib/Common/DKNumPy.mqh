@@ -137,8 +137,8 @@ int ArrayFindConditional(int& _res_arr[],
 //| Returns mean of _arr
 //+------------------------------------------------------------------+
 double ArrayMean(double& _arr[]) {
-  double Sum()
   for(int i=0;i<ArraySize(_arr);i++)    {
          
     }
+  return 0;
 }

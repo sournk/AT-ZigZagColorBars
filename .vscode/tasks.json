@@ -8,7 +8,7 @@
             "type": "shell",
             "command": "python3",
             "args": [
-                "~/dev/DK-MQL5-Tools/build_inputs.py",
+                "~/dev/DK-MQL5-Tools/build_inputs-2.00.py",
                 "${file}"
             ],
             "problemMatcher": []

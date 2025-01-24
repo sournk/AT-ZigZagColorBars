@@ -2,10 +2,13 @@
 //|                                                   DKDatetime.mqh |
 //|                                                  Denis Kislitsyn |
 //|                                             https://kislitsyn.me |
+//| 2025-01-24: [+] UpdateDateInMqlDateTime()
+//              [+] IsTimeCurrentAfterUpdatedTimeToToday()
 //+------------------------------------------------------------------+
+
 #property copyright "Denis Kislitsyn"
 #property link      "https://kislitsyn.me"
-#property version   "0.0.1"
+#property version   "1.02"
 
 
 enum ENUM_DATETIME_PART {
@@ -136,4 +139,35 @@ MqlDateTime StringToMqlDateTime(const string _time_as_str) {
   TimeToStruct(StringToTime(_time_as_str), dt_mql);
   
   return dt_mql;
+}
+
+//+------------------------------------------------------------------+
+//| Replaces date in _dt_mql using _dt
+//+------------------------------------------------------------------+
+void UpdateDateInMqlDateTime(MqlDateTime& _dt_mql, datetime _dt) {
+  MqlDateTime dt_mql_src;
+  TimeToStruct(_dt, dt_mql_src);
+  
+  _dt_mql.year = dt_mql_src.year;
+  _dt_mql.mon = dt_mql_src.mon;
+  _dt_mql.day = dt_mql_src.day;
+}
+
+//+------------------------------------------------------------------+
+//| Is TimeCurrent After than updated to today _dt_mql 
+//+------------------------------------------------------------------+
+bool IsTimeCurrentAfterUpdatedTimeToToday(MqlDateTime& _dt_mql) {
+  MqlDateTime dt_mql = _dt_mql;
+  datetime dt_curr = TimeCurrent();
+  UpdateDateInMqlDateTime(dt_mql, dt_curr);
+  return dt_curr >= StructToTime(dt_mql);
+}
+
+//+------------------------------------------------------------------+
+//| Is TimeCurrent After than updated to today _dt
+//+------------------------------------------------------------------+
+bool IsTimeCurrentAfterUpdatedTimeToToday(datetime _dt) {
+  MqlDateTime dt_mql;
+  TimeToStruct(_dt, dt_mql);
+  return IsTimeCurrentAfterUpdatedTimeToToday(dt_mql);
 }
