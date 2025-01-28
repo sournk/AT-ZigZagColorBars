@@ -1,35 +1,86 @@
 # AT-ZigZagColorBars
-The bot for MetaTrader 5 using ZigZig, ColorBars and WPR indicators for trend trading
+Бот для MetaTrader 5 торгует по комбинации индикаторов ZigZig и WPR и свечным паттернам
 
 * Created by Denis Kislitsyn | denis@kislitsyn.me | [kislitsyn.me](https://kislitsyn.me/personal/algo)
 * Version: 1.00
 
-## What's new?
+## Что нового?
 ```
-1.00: First version
+1.00: Первая версия
 ```
 
-!!! warning Предупреждение
-    1. Стратегию разрабатывал на фьюче CNY на Финаме - CRH5. 
-    2. График торгов очень рваный даже на высоких ТФ. ==Сделки будут сильно скользить особенно на больших лотах из низкой ликвидности.==
-    3. Расчет лота стратегии описан как простая формула Депозит/Цена*Сайз_%. По ней без плеч не хватит депозита для Сайза > 100%. ==Это очень странная формула.==
+!!! warning ПРЕДУПРЕЖДЕНИЕ
+    1. Торговая стратегия определена клиентом. Автор не несет за нее ответственности.
+    2. Бот не гарантирует прибыль.
+    3. Бот не гарантирует 100% защиты депозита.
+    4. Используйте бота на свой страх и риск.
 
-## Strategy
+## Стратегия
 
+1. Бот ждет рождения новой свечи.
+2. На каждой новой свече бот ищет самые свежие вершины ZigZag-а за `SIG_DPT` свечей назад.
+3. Т.е. ZigZag может переносить последнюю вершину после образования нового экстремума, то бот может игнорировать последнюю вершину за `SIG_ZZ_STR` баров.
+4. По направлению последнего сегмента ZigZag-а бот определяет ожидаемое направление входа: сверху вниз - BUY; снизу-вверх SELL.
+5. Бот ждет появление одного из свечных паттернов. В настройках `SIG_MOD_*_ENB` доступны 3 варианта, которые можно включать независимо друг от друга.
+6. При появлении паттерна бот выполняет вход в позицию.
+7. SL за последней вершиной ZigZag-а с доп. отступом.
+8. Фиксированный TP может быть установлен в пунктах. 
+9. При образовании новой противоположенной вершины ZigZag-а бот выходит из открытой позиции.
+10. Одновременно возможна только одна открытая позиция.
+11. От одной вершины ZigZag-а возможен только один вход. Если на той же вершине после закрытия позиции появится еще один сигнал паттерн, то вход будет проигнорирован, т.к. от этой вершины уже была сделка.
+12. В фиксированное время бот может закрывать позиции, чтобы избежать свопов. После этого времени входы также игнорируются.
+13. В боте реализован трейлинг `EXT_TSL_ENB` при выходе позиции в прибыль. Бот переносит стоп за дальнюю вершину за `EXT_TSL_BAR` баров.
 
-## Installation
-1. Make sure that your MetaTrader 5 terminal is updated to the latest version. To test Expert Advisors, it is recommended to update the terminal to the latest beta version. To do this, run the update from the main menu `Help->Check For Updates->Latest Beta Version`. The Expert Advisor may not run on previous versions because it is compiled for the latest version of the terminal. In this case you will see messages on the `Journal` tab about it.
-2. Copy the bot executable file `*.ex5` to the terminal data directory `MQL5\Experts`.
-3. Open the pair chart.
-4. Move the Expert Advisor from the Navigator window to the chart.
-5. Check `Allow Auto Trading` in the bot settings.
-6. Enable the auto trading mode in the terminal by clicking the `Algo Trading` button on the main toolbar.
-7. Load the set of settings by clicking the `Load` button and selecting the set-file.
+![Layout](img/UM001.%20Layout.png)
+
+## Установка
+
+1. **Обновите терминал MetaTrader 5 до последней версии:** `Help->Check For Updates->Latest Release Version`. 
+    - Если советник или индикатор не запускается, то проверьте сообщения на вкладке `Journal`. Возможно вы не обновили терминал до нужной версии.
+    - Иногда для тестирования советников рекомендуется обновить терминал до самой последней бета-версии: `Help->Check For Updates->Latest Beta Version`. На прошлых версиях советник может не запускаться, потому что скомпилирован на последней версии терминала. В этом случае вы увидите сообщения на вкладке `Journal` об этом.
+2. **Скопируйте файл бота `*.ex5` в каталог данных** терминала `MQL5\Experts\`. Открыть каталог данных терминала `File->Open Data Folder`.
+3. **Скопируйте файл индикаторов `*.ex5` в каталог данных** терминала `MQL5\Indicators\`. Открыть каталог данных терминала `File->Open Data Folder`.
+4. **Откройте график нужной пары**.
+5. **Переместите советника из окна `Навигатор` на график**.
+6. **Установите в настройках бота галочку `Allow Auto Trading`**.
+7. **Включите режим автоторговли** в терминале, нажав кнопку `Algo Trading` на главной панели инструментов.
 
 ## Inputs
 
-##### 1. ENTRY (ENT)
-- [x] `ENT_LTP`: Lot Type
-    -  Fixed Lot
-    - % of Deposit
-- [x] `ENT_LTV`: Lot Type Value
+##### 1. СИГНАЛ (SIG)
+- [x] `SIG_DPT`: Глубина поиска сигнала, баров
+- [x] `SIG_MOD_BAR_ENB`: Режим "Просто по свече" включен
+- [x] `SIG_MOD_DUA_ENB`: Режим "Однонаправленная" включен
+- [x] `SIG_MOD_REV_ENB`: Режим "Разворотная" включен
+- [x] `SIG_ZZ_DPT`: ZigZag Depth
+- [x] `SIG_ZZ_DPT`: ZigZag Deviation
+- [x] `SIG_ZZ_DPT`: ZigZag Back Step
+- [x] `SIG_ZZ_STR`: ZigZag Игнорировать вершины до бара
+- [x] `SIG_WPR_PER`: WPR Period
+
+##### 2. ФИЛЬТР (FIL)
+- [x] `FIL_WPR_ENB`: Фильтр по направлению WPR включен
+
+##### 3. ВХОД (ENT)
+- [x] `ENT_LTP`: Тип лота
+- [x] `ENT_LTV`: Значение для расчета лота
+- [x] `ENT_SL_SHT_PER`: Сдвиг SL (0-откл), % от цены
+- [x] `ENT_TP_PNT`: Fixed TP, pnt (0-откл)
+
+##### 4. ВЫХОД (EXT)
+- [x] `EXT_TIM`: Выход после наступления времени (""-откл)
+- [x] `EXT_TSL_ENB`: Trailing Stop включен
+- [x] `EXT_TSL_BAR`: Trailing Stop на хай/лоу за N баров
+
+##### 5. ГРАФИКА (GUI)
+- [x] `GUI_ENB`: Графика сигналов и входов включена
+
+##### 6. РАЗНОЕ (MS)
+- [x] `MS_MGC`: Expert Adviser ID - Magic
+- [x] `MS_EGP`: Expert Adviser Global Prefix
+- [x] `MS_LOG_LL`: Log Level
+- [x] `MS_LOG_FI`: Log Filter IN String (use `;` as sep)
+- [x] `MS_LOG_FO`: Log Filter OUT String (use `;` as sep)
+- [x] `MS_COM_EN`: Comment Enable (turn off for fast testing)
+- [x] `MS_COM_IS`: Comment Interval, Sec
+- [x] `MS_COM_EW`: Comment Custom Win
