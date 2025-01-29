@@ -2,10 +2,12 @@
 Бот для MetaTrader 5 торгует по комбинации индикаторов ZigZig и WPR и свечным паттернам
 
 * Created by Denis Kislitsyn | denis@kislitsyn.me | [kislitsyn.me](https://kislitsyn.me/personal/algo)
-* Version: 1.00
+* Version: 1.01
 
 ## Что нового?
 ```
+1.01: [+] 'ENT_SL_SHF_PNT' вместо 'ENT_SL_SHF_PER'
+      [+] Подключен индикатор ColorBars
 1.00: Первая версия
 ```
 
