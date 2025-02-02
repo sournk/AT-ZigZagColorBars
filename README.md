@@ -66,7 +66,8 @@
 ##### 3. ВХОД (ENT)
 - [x] `ENT_LTP`: Тип лота
 - [x] `ENT_LTV`: Значение для расчета лота
-- [x] `ENT_SL_SHT_PER`: Сдвиг SL (0-откл), % от цены
+- [x] `ENT_SL_SHT_PER`: Сдвиг SL (0-откл), % от цены ==DEPRECATED in 1.01==
+- [x] `ENT_SL_SHT_PNT`: Сдвиг SL (0-откл), пункт
 - [x] `ENT_TP_PNT`: Fixed TP, pnt (0-откл)
 
 ##### 4. ВЫХОД (EXT)
